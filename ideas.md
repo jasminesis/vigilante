@@ -1,0 +1,4 @@
+The game that both inspires me and represent me is persona 4, The protagonist is a blank slate. No note worthy qualities or special skills initially, even a bit isolated. But through awakening his own potential and improving himself he becomes the most powerful being there is. Able to overcome any challenge as he uses the personas he acquired over his struggle for the truth. The story also relies on bonds as well, formed between the protagonist and characters. I am a very apathetic person who puts no effort into what I do, including forming bonds with those around me. But after playing this game I realized how important bonds with others actually are, how they can save you. I came to admire the fools journey and how every story must start from a fresh beginning and no matter what can be overcome. I took it as an inspiration to be who I am and to face and accept myself despite my own shortcomings
+
+
+- include more physics - gravity and acceleration
