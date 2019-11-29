@@ -5,10 +5,7 @@ let bg = new Image();
 bg.src = 'bg.png'
 img.onload = function () {
     window.requestAnimationFrame(step);
-
 }
-
-
 let canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth - 10;
 canvas.height = window.innerHeight - 100;
@@ -25,17 +22,41 @@ let currentLoopIndex = 0;
 let frameCount = 0;
 let currentDirection = 0;
 
+function Background() {
+    this.x = 0;
+    this.y = 0;
+    this.render = function () {
+        console.log("bg moving")
+        // ctx.drawImage(bg, 0, 0, 600, 300, this.x -= 10, 0, 900, 450)
+        if (this.x <= -600) {
+            this.x = 0;
+        }
+    }
+}
+var background = new Background()
+
+function Obstacle() {
+    this.x = 600;
+    this.y = 0;
+    this.render = function () {
+        console.log("obstacling")
+        ctx.fillRect(this.x -= 5, 200, 150, 100)
+    }
+}
+
+// ctx.drawImage(bg, 0, 0, 600, 600, 0, 0, 600, 600)
+var obstacle = new Obstacle()
+
 function drawFrame(frameX, frameY, canvasX, canvasY) {
-    ctx.drawImage(bg, 0, 0, 600, 600, 0, 0, 600, 600)
-    ctx.drawImage(img,
-        frameX * width, frameY * height, width, height,
-        canvasX, canvasY, scaledWidth, scaledHeight);
+    background.render();
+    obstacle.render()
+    ctx.drawImage(img, frameX * width, frameY * height, width, height, canvasX, canvasY + 50, scaledWidth, scaledHeight);
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 }
 
 function step() {
     frameCount++;
-    if (frameCount < 3) {
+    if (frameCount < 2) {
         window.requestAnimationFrame(step);
         return;
     }
