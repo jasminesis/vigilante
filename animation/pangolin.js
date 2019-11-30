@@ -7,7 +7,7 @@ console.log("meow")
 
 let canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth - 10;
-canvas.height = window.innerHeight - 100;
+canvas.height = window.innerHeight / 2;
 let ctx = canvas.getContext('2d');
 
 
@@ -16,6 +16,9 @@ const width = 147;
 const height = 140;
 const scaledWidth = scale * width;
 const scaledHeight = scale * height;
+const gravity = 0.05;
+const gravitySpeed = 0;
+
 
 function drawFrame(frameX, frameY, canvasX, canvasY) {
     ctx.drawImage(img,
@@ -112,11 +115,12 @@ function gameLoop() {
 }
 
 function moveCharacter(deltaX, deltaY, direction) {
+    gravitySpeed == gravity;
     if (positionX + deltaX > 0 && positionX + scaledWidth + deltaX < canvas.width) {
         positionX += deltaX;
     }
     if (positionY + deltaY > 0 && positionY + scaledHeight + deltaY < canvas.height) {
-        positionY += deltaY;
+        positionY += deltaY + gravitySpeed;
     }
     currentDirection = direction;
 }
