@@ -3,12 +3,14 @@ let img = new Image();
 img.src = 'swan.png';
 let bg = new Image();
 bg.src = 'bg-2.png';
+let rock = new Image();
+rock.src = 'blackrock.png';
 img.onload = function() {
 	window.requestAnimationFrame(step);
 };
 let canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth - 10;
-canvas.height = window.innerHeight - 100;
+canvas.height = 250;
 let ctx = canvas.getContext('2d');
 
 let scale = 1;
@@ -25,8 +27,9 @@ let currentDirection = 0;
 function Background() {
 	this.x = 0;
 	this.y = 0;
+	this.speed = 8;
 	this.render = function() {
-		ctx.drawImage(bg, 0, 260, 4080, 250, (this.x -= 8), 0, 4080, 250);
+		ctx.drawImage(bg, 0, 260, 4080, 250, (this.x -= this.speed), 0, 4080, 250);
 		// 625px is where the background repeats
 		if (this.x <= -625) {
 			this.x = 0;
@@ -38,8 +41,10 @@ var background = new Background();
 function Obstacle() {
 	this.x = 600;
 	this.y = 0;
+	this.speed = 8;
 	this.render = function() {
-		ctx.fillRect((this.x -= 5), 200, 150, 100);
+		ctx.drawImage(rock, 0, 0, 40, 40, 0, 0, 40, 40);
+		// ctx.fillRect((this.x -= this.speed), 200, 150, 100);
 	};
 }
 
@@ -56,7 +61,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 		frameY * height,
 		width,
 		height,
-		canvasX,
+		canvas.width / 8,
 		canvasY + 50,
 		scaledWidth,
 		scaledHeight
