@@ -8,7 +8,7 @@ let ctx = canvas.getContext('2d');
 let rock = new Image();
 rock.src = 'blackrock.png';
 rock.onload = function() {
-	init();
+	// init();
 	animate();
 };
 
@@ -29,8 +29,9 @@ function Rock(x, y, dx, dy) {
 	this.y = y;
 	this.dx = dx;
 	this.dy = dy;
-	this.width = 32;
-	this.height = 27;
+	this.width = 40;
+	this.height = 35;
+	let scale = 2;
 
 	this.update = function() {
 		// if it touches the bottom of the canvas - then bounce back up and get affected by friction
@@ -52,12 +53,26 @@ function Rock(x, y, dx, dy) {
 		this.draw();
 	};
 
-	this.draw = function() {
-		ctx.drawImage(this.img, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+	this.draw = function(frameX, frameY) {
+		ctx.drawImage(
+			this.img,
+			frameX * this.width,
+			frameY * this.height + 72,
+			this.width,
+			this.height,
+			this.x,
+			this.y,
+			this.width * scale,
+			this.height * scale
+		);
 	};
 }
 
-// var dwayne = new Rock(0, canvas.height / 2, 1, 2);
+const cycleLoop = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ];
+let currentLoopIndex = 0;
+let frameCount = 0;
+
+let dwayne = new Rock(canvas.width / 2, canvas.height / 2, 0, 0);
 
 var rockArray = [];
 
@@ -72,14 +87,24 @@ function init() {
 		var dy = randomIntFromRange(-2, 2);
 		rockArray.push(new Rock(x, y, dx, dy));
 	}
-	// dwayne.draw();
-	// console.log('Drawing dwayne the rock');
 }
 
 function animate() {
+	frameCount++;
+	if (frameCount < 15) {
+		window.requestAnimationFrame(animate);
+		return;
+	}
+	frameCount = 0;
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	// dwayne.update();
-	// dwayne.y++;
+
+	dwayne.draw(cycleLoop[currentLoopIndex], 0);
+	currentLoopIndex++;
+	if (currentLoopIndex >= cycleLoop.length) {
+		return;
+	}
+
 	for (let i = 0; i < rockArray.length; i++) {
 		rockArray[i].update();
 	}

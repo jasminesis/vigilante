@@ -8,9 +8,22 @@ rock.src = 'blackrock.png';
 img.onload = function() {
 	window.requestAnimationFrame(step);
 };
+
+// Utility functions
+var gravity = 0.1;
+
+// friction has to be a fraction so that is lowers the speed in general
+// higher friction means more bounce because less speed is being "rubbed off"
+var friction = 0.1;
+
+function randomIntFromRange(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+/////////////////////
+
 let canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth - 10;
-canvas.height = 250;
+canvas.height = 500;
 let ctx = canvas.getContext('2d');
 
 let scale = 1;
@@ -38,22 +51,51 @@ function Background() {
 }
 var background = new Background();
 
-function Obstacle() {
-	this.x = 600;
-	this.y = 0;
-	this.speed = 8;
-	this.render = function() {
-		ctx.drawImage(rock, 0, 0, 40, 40, 0, 0, 40, 40);
-		// ctx.fillRect((this.x -= this.speed), 200, 150, 100);
+function Rock(x, y, dx, dy) {
+	this.img = rock;
+	this.x = x;
+	this.y = y;
+	this.dx = dx;
+	this.dy = dy;
+	this.width = 32;
+	this.height = 27;
+
+	this.update = function() {
+		this.dy += gravity;
+		this.x += this.dx;
+		this.y += this.dy;
+
+		this.draw();
+	};
+
+	this.draw = function() {
+		ctx.drawImage(this.img, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
 	};
 }
+var rockArray = [];
 
-// ctx.drawImage(bg, 0, 0, 600, 600, 0, 0, 600, 600)
-var obstacle = new Obstacle();
-
+function createRocks() {
+	rockArray = [];
+	console.log('rockArray', rockArray);
+	for (let i = 0; i < 12; i++) {
+		var x = randomIntFromRange(0, canvas.width);
+		// rocks fall from the top half of the screen
+		var y = randomIntFromRange(0, canvas.height / 2);
+		var dx = randomIntFromRange(0, 0);
+		var dy = randomIntFromRange(0, 8);
+		rockArray.push(new Rock(x, y, dx, dy));
+	}
+	// dwayne.draw();
+	// console.log('Drawing dwayne the rock');
+}
+createRocks();
+function animateRocks() {
+	for (let i = 0; i < rockArray.length; i++) {
+		rockArray[i].update();
+	}
+}
 function drawFrame(frameX, frameY, canvasX, canvasY) {
-	background.render();
-	obstacle.render();
+	// background.render();
 	this.x = 0;
 	ctx.drawImage(
 		img,
@@ -82,5 +124,6 @@ function step() {
 	if (currentLoopIndex >= cycleLoop.length) {
 		currentLoopIndex = 0;
 	}
+	animateRocks();
 	window.requestAnimationFrame(step);
 }
