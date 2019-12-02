@@ -82,6 +82,7 @@ function gameLoop() {
 
     // prevents pangolin from falling off stage
     if (positionY + height > canvas.height) {
+        // hard coded to keep pangolin on stage
         positionY = canvas.height - height + 1;
     } else {
         positionY += gravity * 30;

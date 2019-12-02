@@ -38,7 +38,8 @@ const scaledHeight = scale * height;
 const cycleLoop = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 let currentLoopIndex = 0;
 let frameCount = 0;
-let currentDirection = 0;
+
+
 
 function Background() {
     this.x = 0;
@@ -80,19 +81,21 @@ var rockArray = [];
 function createRocks() {
     rockArray = [];
     console.log('rockArray', rockArray);
-    for (let i = 0; i < 5; i++) {
+
+    let numberOfRocks = randomIntFromRange(1, 7)
+
+    for (let i = 0; i < numberOfRocks; i++) {
         // rocks fall from the right half of the screen
-        var x = randomIntFromRange(canvas.width / 2, canvas.width);
+        var x = randomIntFromRange(canvas.width * 3 / 4, canvas.width);
         // rocks fall from the top half of the screen
-        var y = randomIntFromRange(0, canvas.height / 2);
-        var dx = randomIntFromRange(-5, -20);
+        var y = -20; //randomIntFromRange(0, canvas.height / 2);
+        var dx = randomIntFromRange(-8, -20);
         var dy = randomIntFromRange(0, 8);
         rockArray.push(new Rock(x, y, dx, dy));
     }
     // dwayne.draw();
     // console.log('Drawing dwayne the rock');
 }
-createRocks();
 
 function animateRocks() {
     for (let i = 0; i < rockArray.length; i++) {
@@ -100,23 +103,17 @@ function animateRocks() {
     }
 }
 
+let keyPresses = {};
 
-var controller = {
+window.addEventListener('keydown', keyDownListener, false);
 
-    active: false,
-    state: false,
+function keyDownListener(event) {
+    keyPresses[event.key] = true;
+}
+window.addEventListener('keyup', keyUpListener, false);
 
-    onOff: function (event) {
-        // The Event interface's preventDefault() method tells the user agent that if the event does not get explicitly handled, its default action should not be taken as it normally would be.
-        event.preventDefault();
-
-        let key_state = (event.type == "mousedown" || event.type == "touchstart") ? true : false;
-
-        // when mouse is clicked, the key_state becomes true, so controller state becomes true
-
-        if (controller.state != key_state) controller.active = key_state;
-        controller.state = key_state;
-    }
+function keyUpListener(event) {
+    keyPresses[event.key] = false;
 }
 
 // draws the swan
@@ -138,34 +135,43 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
 let swanY = canvas.height / 2;
 
 function step() {
-    // gameCount += 0.1;
-    // console.log(gameCount)
+    gameCount += 1;
+    console.log(gameCount)
     frameCount++;
     if (frameCount < 2) {
         window.requestAnimationFrame(step);
         return;
     }
+
+    if (gameCount % 100 == 0) {
+        createRocks();
+    }
     frameCount = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // background.render();
-
+    background.render();
+    // swanY += gravity;
     // click to make swan move up
-    if (controller.active) {
-        swanY -= 50;
-        console.log("tapped")
-        controller.active = false;
-        controller.state = false;
-
+    if (keyPresses.w) {
+        if (swanY < 0 - height / 3) {
+            console.log("k")
+        } else {
+            swanY -= movementSpeed;
+        }
+    } else if (keyPresses.s) {
+        if (swanY > canvas.height - height) {
+            console.log("w")
+        } else {
+            swanY += movementSpeed
+        }
     }
 
     drawFrame(cycleLoop[currentLoopIndex], 0, 0, swanY);
     // commented out to stop swan flapping
-    // currentLoopIndex++;
+    currentLoopIndex++;
     if (currentLoopIndex >= cycleLoop.length) {
         currentLoopIndex = 0;
     }
+
     animateRocks();
     window.requestAnimationFrame(step);
 }
-
-window.addEventListener("mousedown", controller.onOff);
