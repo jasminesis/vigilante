@@ -125,7 +125,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
         frameY * height,
         width,
         height,
-        canvas.width / 8,
+        canvasX,
         canvasY,
         scaledWidth,
         scaledHeight
@@ -133,6 +133,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 }
 let swanY = canvas.height / 2;
+let swanX = canvas.width / 2;
 
 function step() {
     gameCount += 1;
@@ -149,6 +150,9 @@ function step() {
     frameCount = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     background.render();
+
+    swanX = mouseX;
+    swanY = mouseY;
     // swanY += gravity;
     // click to make swan move up
     if (keyPresses.w) {
@@ -165,7 +169,7 @@ function step() {
         }
     }
 
-    drawFrame(cycleLoop[currentLoopIndex], 0, 0, swanY);
+    drawFrame(cycleLoop[currentLoopIndex], 0, swanX, swanY);
     // commented out to stop swan flapping
     currentLoopIndex++;
     if (currentLoopIndex >= cycleLoop.length) {
@@ -173,5 +177,22 @@ function step() {
     }
 
     animateRocks();
+
+    ctx.font = "20px Arial"
+    ctx.fillText(Math.floor(gameCount / 5), 10, 30)
     window.requestAnimationFrame(step);
+}
+
+function gameOver() {
+    alert("hi")
+}
+
+window.addEventListener('mousemove', getMousePosition)
+
+let mouseX;
+let mouseY;
+
+function getMousePosition(event) {
+    mouseX = event.clientX;
+    mouseY = event.clientY
 }
