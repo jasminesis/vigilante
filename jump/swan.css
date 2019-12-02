@@ -21,8 +21,16 @@ body {
 	justify-items: center;
 	padding: 0 8px;
 	width: 100%;
+	font-family: 'Bebas Neue', cursive;
+
 }
 
 canvas {
-	background: whitesmoke;
+	background: linen;
+	/* background: linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%); */
+	border: 2px solid white;
+}
+
+p {
+	font-size: 1.2rem;
 }

@@ -15,7 +15,7 @@ const width = 147;
 const height = 140;
 const scaledWidth = scale * width;
 const scaledHeight = scale * height;
-const gravity = 0.2;
+const gravity = 0.05;
 const gravitySpeed = 0;
 
 function drawFrame(frameX, frameY, canvasX, canvasY) {
@@ -67,7 +67,7 @@ function keyUpListener(event) {
     keyPresses[event.key] = false;
 }
 
-const MOVEMENT_SPEED = 10;
+const MOVEMENT_SPEED = 5;
 let positionX = 0;
 let positionY = 0;
 
@@ -76,19 +76,20 @@ let frameLimit = 15;
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-
     let hasMoved = false;
 
-    // prevents pangolin from falling off stage
-    if (positionY + height > canvas.height) {
-        positionY = canvas.height - height + 1;
-    } else {
-        positionY += gravity * 30;
-    }
-
     if (keyPresses.w) {
-        positionY = positionY - MOVEMENT_SPEED;
+        moveCharacter(0, -MOVEMENT_SPEED, 0);
+        hasMoved = true;
+    } else if (keyPresses.s) {
+        moveCharacter(0, MOVEMENT_SPEED, 0);
+        hasMoved = true;
+    }
+    if (keyPresses.a) {
+        moveCharacter(-MOVEMENT_SPEED, 0, 0);
+        hasMoved = true;
+    } else if (keyPresses.d) {
+        moveCharacter(MOVEMENT_SPEED, 0, 0);
         hasMoved = true;
     }
     if (hasMoved) {

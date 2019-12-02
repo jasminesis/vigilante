@@ -1,4 +1,4 @@
-console.log('rocks falling from the sky!');
+console.log('rocks jumping from the ground!');
 
 let canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
@@ -7,9 +7,9 @@ let ctx = canvas.getContext('2d');
 
 let rock = new Image();
 rock.src = 'blackrock.png';
-rock.onload = function() {
-	// init();
-	animate();
+rock.onload = function () {
+    init();
+    animate();
 };
 
 // higher gravity (0.9) makes it move and bounce faster
@@ -20,93 +20,133 @@ var gravity = 0.1;
 var friction = 0.1;
 
 function randomIntFromRange(min, max) {
-	return Math.floor(Math.random() * (max - min + 1) + min);
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
+const MOVEMENT_SPEED = 5;
 
 function Rock(x, y, dx, dy) {
-	this.img = rock;
-	this.x = x;
-	this.y = y;
-	this.dx = dx;
-	this.dy = dy;
-	this.width = 40;
-	this.height = 35;
-	let scale = 2;
+    this.img = rock;
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.width = 40;
+    this.height = 35;
+    let scale = 2;
 
-	this.update = function() {
-		// if it touches the bottom of the canvas - then bounce back up and get affected by friction
-		// if (this.y + this.height / 1.2 + this.dy > canvas.height) {
-		// this.dy = -this.dy; //makes rocks bounce back up
-		// this.dy = this.dy * friction;
-		// } else {
-		// else, while it is falling, add gravity to make it fall faster
-		this.dy += gravity;
-		// }
-		// if the x position of the rock is outside the canvas OR is inside the canvas
-		// if (this.x > canvas.width || this.x < canvas.width) {
-		// 	this.dx = -this.dx * friction;
-		// }
+    this.update = function () {
+        // if it touches the bottom of the canvas - then bounce back up and get affected by friction
+        // if (this.y + this.height / 1.2 + this.dy > canvas.height) {
+        // this.dy = -this.dy; //makes rocks bounce back up
+        // this.dy = this.dy * friction;
+        // } else {
+        // else, while it is falling, add gravity to make it fall faster
+        this.dy += gravity;
+        // }
+        // if the x position of the rock is outside the canvas OR is inside the canvas
+        // if (this.x > canvas.width || this.x < canvas.width) {
+        // 	this.dx = -this.dx * friction;
+        // }
 
-		this.x += this.dx;
-		this.y += this.dy;
+        this.x += this.dx;
+        this.y += this.dy;
 
-		this.draw();
-	};
+        if (this.y > canvas.height) {
+            this.y = canvas.height / 2;
+            this.x = canvas.width / 2;
+        }
 
-	this.draw = function(frameX, frameY) {
-		ctx.drawImage(
-			this.img,
-			frameX * this.width,
-			frameY * this.height + 72,
-			this.width,
-			this.height,
-			this.x,
-			this.y,
-			this.width * scale,
-			this.height * scale
-		);
-	};
+        this.draw();
+    };
+
+    this.draw = function (frameX, frameY) {
+        ctx.drawImage(
+            this.img,
+            frameX * this.width,
+            frameY * this.height + 72,
+            this.width,
+            this.height,
+            this.x,
+            this.y,
+            this.width * scale,
+            this.height * scale
+        );
+    };
 }
 
-const cycleLoop = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ];
+const cycleLoop = [0, 1, 2, 3] //, 4, 5, 6, 7, 8, 9];
 let currentLoopIndex = 0;
 let frameCount = 0;
 
-let dwayne = new Rock(canvas.width / 2, canvas.height / 2, 0, 0);
+let dwayne = new Rock(canvas.width / 2, canvas.height / 2, -20, 20);
 
 var rockArray = [];
 
 function init() {
-	rockArray = [];
-	console.log('rockArray', rockArray);
-	for (let i = 0; i < 12; i++) {
-		var x = randomIntFromRange(0, canvas.width);
-		// rocks fall from the top half of the screen
-		var y = randomIntFromRange(0, canvas.height / 2);
-		var dx = -5; //randomIntFromRange(-3, 3);
-		var dy = randomIntFromRange(-2, 2);
-		rockArray.push(new Rock(x, y, dx, dy));
-	}
+    rockArray = [];
+    console.log('rockArray', rockArray);
+    for (let i = 0; i < 12; i++) {
+        var x = randomIntFromRange(0, canvas.width);
+        // rocks fall from the top half of the screen
+        var y = randomIntFromRange(0, canvas.height / 2);
+        var dx = -5; //randomIntFromRange(-3, 3);
+        var dy = randomIntFromRange(-2, 2);
+        rockArray.push(new Rock(x, y, dx, dy));
+    }
+}
+
+function drawDwayne() {
+    dwayne.draw(cycleLoop[currentLoopIndex], 0);
+    currentLoopIndex++;
+    if (currentLoopIndex >= cycleLoop.length) {
+        currentLoopIndex = 0;
+    }
 }
 
 function animate() {
-	frameCount++;
-	if (frameCount < 15) {
-		window.requestAnimationFrame(animate);
-		return;
-	}
-	frameCount = 0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frameCount++;
+    if (frameCount < 15) {
+        window.requestAnimationFrame(animate);
+        return;
+    }
+    frameCount = 0;
 
-	dwayne.draw(cycleLoop[currentLoopIndex], 0);
-	currentLoopIndex++;
-	if (currentLoopIndex >= cycleLoop.length) {
-		return;
-	}
+    let hasMoved = false;
+    if (keyPresses.w) {
+        moveCharacter(-MOVEMENT_SPEED);
+        hasMoved = true;
+    }
 
-	for (let i = 0; i < rockArray.length; i++) {
-		rockArray[i].update();
-	}
-	requestAnimationFrame(animate);
+
+    drawDwayne();
+    dwayne.update();
+
+    for (let i = 0; i < rockArray.length; i++) {
+        rockArray[i].update();
+    }
+    requestAnimationFrame(animate);
+}
+let jump;
+
+function onOff(event) {
+
+    if (event.type == "mousedown") {
+        jump = true;
+    } else {
+        jump = false;
+    }
+    console.log("jump is ", jump)
+}
+let keyPresses = {};
+
+window.addEventListener('keyup', keyUpListener, false);
+
+function keyUpListener(event) {
+    keyPresses[event.key] = false;
+}
+
+function moveCharacter(deltaY) {
+    positionY += deltaY
 }
