@@ -3,6 +3,10 @@ The game that both inspires me and represent me is persona 4, The protagonist is
 
 - include more physics - gravity and acceleration
 
+## cool things I've done
+- collision detection
+- including physics
+
 
 # SWAN!
 

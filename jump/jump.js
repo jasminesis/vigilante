@@ -125,7 +125,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
         frameY * height,
         width,
         height,
-        canvasX,
+        canvas.width / 8,
         canvasY,
         scaledWidth,
         scaledHeight
@@ -144,15 +144,13 @@ function step() {
         return;
     }
 
-    if (gameCount % 100 == 0) {
+    if (gameCount % 120 == 0) {
         createRocks();
     }
     frameCount = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     background.render();
 
-    swanX = mouseX;
-    swanY = mouseY;
     // swanY += gravity;
     // click to make swan move up
     if (keyPresses.w) {
@@ -171,7 +169,7 @@ function step() {
 
     drawFrame(cycleLoop[currentLoopIndex], 0, swanX, swanY);
     // commented out to stop swan flapping
-    currentLoopIndex++;
+    // currentLoopIndex++;
     if (currentLoopIndex >= cycleLoop.length) {
         currentLoopIndex = 0;
     }
