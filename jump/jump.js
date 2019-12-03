@@ -189,12 +189,10 @@ function step() {
     // swanY += gravity;
     // click to make swan move up
     if (keyPresses.w) {
-        console.log("swanY", swanY)
         if (swanY < -50) {} else {
             swanY -= movementSpeed;
         }
     } else if (keyPresses.s) {
-        console.log("swanY", swanY)
         if (swanY > 125) {} else {
             swanY += movementSpeed
         }
@@ -216,6 +214,8 @@ function step() {
     ctx.font = "20px Arial"
     ctx.fillText(Math.floor(gameCount / 5), 10, 30)
     myReq = window.requestAnimationFrame(step);
+    detectCollisions()
+
 }
 
 function gameOver() {
@@ -236,7 +236,6 @@ function getMousePosition(canvas, event) {
     // console.log("Coordinate y: " + mouseY, swanY);
     // console.log(tallHitBox.y)
 
-    detectCollisions()
 }
 
 function detectCollisions() {
@@ -248,9 +247,13 @@ function detectCollisions() {
     // }
 
     rockArray.forEach(rock => {
-        console.log(rock.x, rock.y)
-        if (rock.x + 6 > tallHitBox.x && rock.x + 6 < tallHitBox.x + tallHitBox.width && rock.y > tallHitBox.y && rock.y < tallHitBox.y + tallHitBox.height) {
-            cancelAnimationFrame(myReq)
-        }
+        let bottom = rock.y + rock.height - 4;
+        let left = rock.x + 6;
+        let right = rock.x + 6 + rock.width - 6;
+        let top = rock.y;
+
+        if (left < tallHitBox.x + tallHitBox.width && right > tallHitBox.x && bottom > tallHitBox.y && top < tallHitBox.y + tallHitBox.height || left < longHitBox.x + longHitBox.width && right > longHitBox.x && bottom > longHitBox.y && top < longHitBox.y + longHitBox.height)
+            // cancelAnimationFrame(myReq)
+            console.log('HIT', rock.x, swanX)
     })
 }
