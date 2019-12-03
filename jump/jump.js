@@ -132,12 +132,43 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
     );
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 }
-let swanY = canvas.height / 2;
-let swanX = canvas.width / 2;
+let swanY = canvas.height / 6;
+let swanX = canvas.width / 8;
+
+function DrawTallHitBox() {
+    this.x = swanX + 80 * scale;
+    this.y = swanY + 50 * scale;
+    this.width = width * scale / 6;
+    this.height = height * scale / 2.5;
+    this.draw = function () {
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.strokeStyle = 'blue'
+        ctx.stroke();
+    }
+    this.update = function () {
+        this.draw();
+    }
+}
+
+function DrawLongHitBox() {
+    this.x = swanX + 40 * scale;
+    this.y = swanY + 85 * scale;
+    this.width = width * scale / 2.5
+    this.height = height * scale / 5
+    this.draw = function () {
+
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.strokeStyle = 'red'
+        ctx.stroke();
+    }
+}
+
+
 
 function step() {
     gameCount += 1;
-    console.log(gameCount)
     frameCount++;
     if (frameCount < 2) {
         window.requestAnimationFrame(step);
@@ -154,15 +185,13 @@ function step() {
     // swanY += gravity;
     // click to make swan move up
     if (keyPresses.w) {
-        if (swanY < 0 - height / 3) {
-            console.log("k")
-        } else {
+        console.log("swanY", swanY)
+        if (swanY < -50) {} else {
             swanY -= movementSpeed;
         }
     } else if (keyPresses.s) {
-        if (swanY > canvas.height - height) {
-            console.log("w")
-        } else {
+        console.log("swanY", swanY)
+        if (swanY > 125) {} else {
             swanY += movementSpeed
         }
     }
@@ -173,8 +202,12 @@ function step() {
     if (currentLoopIndex >= cycleLoop.length) {
         currentLoopIndex = 0;
     }
-
+    tallHitBox = new DrawTallHitBox()
+    tallHitBox.draw();
     // animateRocks();
+
+    longHitBox = new DrawLongHitBox();
+    longHitBox.draw();
 
     ctx.font = "20px Arial"
     ctx.fillText(Math.floor(gameCount / 5), 10, 30)
@@ -185,12 +218,28 @@ function gameOver() {
     alert("hi")
 }
 
-window.addEventListener('mousemove', getMousePosition)
+window.addEventListener('mousemove', () => {
+    getMousePosition(canvas, event)
+})
 
 let mouseX;
 let mouseY;
 
-function getMousePosition(event) {
-    mouseX = event.clientX;
-    mouseY = event.clientY
+function getMousePosition(canvas, event) {
+    let rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+    // console.log("Coordinate y: " + mouseY, swanY);
+    // console.log(tallHitBox.y)
+
+    detectCollisions()
+}
+
+function detectCollisions() {
+    if (mouseX > tallHitBox.x && mouseX < tallHitBox.x + tallHitBox.width && mouseY > tallHitBox.y && mouseY < tallHitBox.y + tallHitBox.height) {
+        console.log("HIT THE TALL HIT BOX")
+    }
+    if (mouseX > longHitBox.x && mouseX < longHitBox.x + longHitBox.width && mouseY > longHitBox.y && mouseY < longHitBox.y + longHitBox.height) {
+        console.log("HIT THE LONG HIT BOX")
+    }
 }
