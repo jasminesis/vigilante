@@ -64,6 +64,7 @@ function Rock(x, y, dx, dy) {
     this.width = 32;
     this.height = 27;
 
+
     this.update = function () {
         this.dy += gravity;
         this.x += this.dx;
@@ -74,23 +75,26 @@ function Rock(x, y, dx, dy) {
 
     this.draw = function () {
         ctx.drawImage(this.img, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+
+        ctx.beginPath();
+        ctx.rect(this.x + 6, this.y, this.width - 6, this.height - 4);
+        ctx.stroke();
     };
 }
 var rockArray = [];
 
+
 function createRocks() {
     rockArray = [];
-    console.log('rockArray', rockArray);
+    // console.log('rockArray', rockArray);
 
-    let numberOfRocks = randomIntFromRange(1, 4)
+    let numberOfRocks = randomIntFromRange(1, 1)
 
     for (let i = 0; i < numberOfRocks; i++) {
-        // rocks fall from the right half of the screen
         var x = randomIntFromRange(canvas.width * 3 / 4, canvas.width);
-        // rocks fall from the top half of the screen
-        var y = -20; //randomIntFromRange(0, canvas.height / 2);
-        var dx = randomIntFromRange(-8, -15);
-        var dy = randomIntFromRange(0, 8);
+        var y = -20;
+        var dx = randomIntFromRange(-10, -10);
+        var dy = randomIntFromRange(3, 3);
         rockArray.push(new Rock(x, y, dx, dy));
     }
     // dwayne.draw();
@@ -142,7 +146,7 @@ function DrawTallHitBox() {
     this.height = height * scale / 2.5;
     this.draw = function () {
         ctx.beginPath();
-        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.rect(this.x + 4, this.y, this.width - 5, this.height);
         ctx.strokeStyle = 'blue'
         ctx.stroke();
     }
@@ -165,7 +169,7 @@ function DrawLongHitBox() {
     }
 }
 
-
+var myReq;
 
 function step() {
     gameCount += 1;
@@ -204,14 +208,14 @@ function step() {
     }
     tallHitBox = new DrawTallHitBox()
     tallHitBox.draw();
-    // animateRocks();
+    animateRocks();
 
     longHitBox = new DrawLongHitBox();
     longHitBox.draw();
 
     ctx.font = "20px Arial"
     ctx.fillText(Math.floor(gameCount / 5), 10, 30)
-    window.requestAnimationFrame(step);
+    myReq = window.requestAnimationFrame(step);
 }
 
 function gameOver() {
@@ -236,10 +240,17 @@ function getMousePosition(canvas, event) {
 }
 
 function detectCollisions() {
-    if (mouseX > tallHitBox.x && mouseX < tallHitBox.x + tallHitBox.width && mouseY > tallHitBox.y && mouseY < tallHitBox.y + tallHitBox.height) {
-        console.log("HIT THE TALL HIT BOX")
-    }
-    if (mouseX > longHitBox.x && mouseX < longHitBox.x + longHitBox.width && mouseY > longHitBox.y && mouseY < longHitBox.y + longHitBox.height) {
-        console.log("HIT THE LONG HIT BOX")
-    }
+    // if (mouseX > tallHitBox.x && mouseX < tallHitBox.x + tallHitBox.width && mouseY > tallHitBox.y && mouseY < tallHitBox.y + tallHitBox.height) {
+    //     console.log("TOUCHED THE TALL HIT BOX")
+    // }
+    // if (mouseX > longHitBox.x && mouseX < longHitBox.x + longHitBox.width && mouseY > longHitBox.y && mouseY < longHitBox.y + longHitBox.height) {
+    //     console.log("TOUCHED THE LONG HIT BOX")
+    // }
+
+    rockArray.forEach(rock => {
+        console.log(rock.x, rock.y)
+        if (rock.x + 6 > tallHitBox.x && rock.x + 6 < tallHitBox.x + tallHitBox.width && rock.y > tallHitBox.y && rock.y < tallHitBox.y + tallHitBox.height) {
+            cancelAnimationFrame(myReq)
+        }
+    })
 }

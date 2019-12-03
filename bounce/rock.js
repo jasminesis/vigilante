@@ -9,7 +9,7 @@ let rock = new Image();
 rock.src = 'blackrock.png';
 rock.onload = function () {
     init();
-    animate();
+    // animate();
 };
 
 // higher gravity (0.9) makes it move and bounce faster
@@ -32,7 +32,7 @@ function Rock(x, y, dx, dy) {
     this.dy = dy;
     this.width = 40;
     this.height = 35;
-    let scale = 2;
+    let scale = 1;
 
     this.update = function () {
         // if it touches the bottom of the canvas - then bounce back up and get affected by friction
@@ -78,7 +78,7 @@ const cycleLoop = [0, 1, 2, 3] //, 4, 5, 6, 7, 8, 9];
 let currentLoopIndex = 0;
 let frameCount = 0;
 
-let dwayne = new Rock(canvas.width / 2, canvas.height / 2, -20, 20);
+let dwayne = new Rock(canvas.width / 2, canvas.height / 2, 0, 0);
 
 var rockArray = [];
 
@@ -95,13 +95,6 @@ function init() {
     }
 }
 
-function drawDwayne() {
-    dwayne.draw(cycleLoop[currentLoopIndex], 0);
-    currentLoopIndex++;
-    if (currentLoopIndex >= cycleLoop.length) {
-        currentLoopIndex = 0;
-    }
-}
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -111,42 +104,7 @@ function animate() {
         window.requestAnimationFrame(animate);
         return;
     }
-    frameCount = 0;
+    dwayne.draw();
 
-    let hasMoved = false;
-    if (keyPresses.w) {
-        moveCharacter(-MOVEMENT_SPEED);
-        hasMoved = true;
-    }
-
-
-    drawDwayne();
-    dwayne.update();
-
-    for (let i = 0; i < rockArray.length; i++) {
-        rockArray[i].update();
-    }
     requestAnimationFrame(animate);
-}
-let jump;
-
-function onOff(event) {
-
-    if (event.type == "mousedown") {
-        jump = true;
-    } else {
-        jump = false;
-    }
-    console.log("jump is ", jump)
-}
-let keyPresses = {};
-
-window.addEventListener('keyup', keyUpListener, false);
-
-function keyUpListener(event) {
-    keyPresses[event.key] = false;
-}
-
-function moveCharacter(deltaY) {
-    positionY += deltaY
 }
