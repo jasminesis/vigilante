@@ -82,14 +82,14 @@ function createRocks() {
     rockArray = [];
     console.log('rockArray', rockArray);
 
-    let numberOfRocks = randomIntFromRange(1, 7)
+    let numberOfRocks = randomIntFromRange(1, 4)
 
     for (let i = 0; i < numberOfRocks; i++) {
         // rocks fall from the right half of the screen
         var x = randomIntFromRange(canvas.width * 3 / 4, canvas.width);
         // rocks fall from the top half of the screen
         var y = -20; //randomIntFromRange(0, canvas.height / 2);
-        var dx = randomIntFromRange(-8, -20);
+        var dx = randomIntFromRange(-8, -15);
         var dy = randomIntFromRange(0, 8);
         rockArray.push(new Rock(x, y, dx, dy));
     }
@@ -174,7 +174,7 @@ function step() {
         currentLoopIndex = 0;
     }
 
-    animateRocks();
+    // animateRocks();
 
     ctx.font = "20px Arial"
     ctx.fillText(Math.floor(gameCount / 5), 10, 30)
