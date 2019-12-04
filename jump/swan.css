@@ -29,7 +29,9 @@ canvas {
 	background: linen;
 	/* animation-name: example; */
 	/* animation-duration: 5s; */
-	background: linear-gradient(to bottom, rgb(32, 104, 145) 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%);
+	/* background: linear-gradient(to bottom, rgb(32, 104, 145) 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%); */
+
+	background: linear-gradient(to bottom, #154277 0%, #576e71 30%, #e1c45e 70%, #b26339 100%);
 }
 
 p {
