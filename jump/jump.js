@@ -1,5 +1,10 @@
 console.log('pangolin rollin');
 
+// TODO: set up the scoring system
+// TODO: make rocks different sizes?
+// TODO: make resize function
+
+
 // INITIALISING IMAGES 
 let img = new Image();
 img.src = 'swan.png';
@@ -9,7 +14,7 @@ let rock = new Image();
 rock.src = 'blackrock.png';
 
 img.onload = function () {
-    window.requestAnimationFrame(step);
+    window.requestAnimationFrame(animate);
 };
 
 // Utility functions
@@ -52,7 +57,22 @@ function Background() {
             this.x = canvas.width;
         }
     };
+    this.gradient = function () {
+        gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+        gradient.addColorStop(0, 'rgb(46, 126, 172)');
+        gradient.addColorStop(0.3, '#4F4F47');
+        gradient.addColorStop(0.6, '#C5752D');
+        gradient.addColorStop(0.8, '#B7490F');
+        gradient.addColorStop(1, '#2F1107');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
 }
+
+// .sky-gradient-18 { background: linear-gradient(to bottom, #154277 0%,#576e71 30%,#e1c45e 70%,#b26339 100%); }
+// .sky-gradient-19 { background: linear-gradient(to bottom, #163C52 0%,#4F4F47 30%,#C5752D 60%,#B7490F 80%, #2F1107 100%); }
+
 var background = new Background();
 
 function Rock(x, y, dx, dy) {
@@ -63,7 +83,6 @@ function Rock(x, y, dx, dy) {
     this.dy = dy;
     this.width = 32;
     this.height = 27;
-
 
     this.update = function () {
         this.dy += gravity;
@@ -77,12 +96,12 @@ function Rock(x, y, dx, dy) {
         ctx.drawImage(this.img, 0, 0, this.width, this.height, this.x, this.y, this.width, this.height);
 
         ctx.beginPath();
-        ctx.rect(this.x + 6, this.y, this.width - 6, this.height - 4);
+        ctx.rect(this.x + 6, this.y + 4, this.width - 6, this.height - 10);
+        ctx.strokeStyle = "transparent"
         ctx.stroke();
     };
 }
 var rockArray = [];
-
 
 function createRocks() {
     rockArray = [];
@@ -107,18 +126,7 @@ function animateRocks() {
     }
 }
 
-let keyPresses = {};
 
-window.addEventListener('keydown', keyDownListener, false);
-
-function keyDownListener(event) {
-    keyPresses[event.key] = true;
-}
-window.addEventListener('keyup', keyUpListener, false);
-
-function keyUpListener(event) {
-    keyPresses[event.key] = false;
-}
 
 // draws the swan
 function drawFrame(frameX, frameY, canvasX, canvasY) {
@@ -147,7 +155,7 @@ function DrawTallHitBox() {
     this.draw = function () {
         ctx.beginPath();
         ctx.rect(this.x + 4, this.y, this.width - 5, this.height);
-        ctx.strokeStyle = 'blue'
+        ctx.strokeStyle = 'transparent'
         ctx.stroke();
     }
     this.update = function () {
@@ -164,18 +172,18 @@ function DrawLongHitBox() {
 
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.strokeStyle = 'red'
+        ctx.strokeStyle = 'transparent'
         ctx.stroke();
     }
 }
 
 var myReq;
 
-function step() {
+function animate() {
     gameCount += 1;
     frameCount++;
     if (frameCount < 2) {
-        window.requestAnimationFrame(step);
+        window.requestAnimationFrame(animate);
         return;
     }
 
@@ -184,6 +192,9 @@ function step() {
     }
     frameCount = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+    background.gradient();
     background.render();
 
     // swanY += gravity;
@@ -200,7 +211,7 @@ function step() {
 
     drawFrame(cycleLoop[currentLoopIndex], 0, swanX, swanY);
     // commented out to stop swan flapping
-    // currentLoopIndex++;
+    currentLoopIndex++;
     if (currentLoopIndex >= cycleLoop.length) {
         currentLoopIndex = 0;
     }
@@ -213,7 +224,10 @@ function step() {
 
     ctx.font = "20px Arial"
     ctx.fillText(Math.floor(gameCount / 5), 10, 30)
-    myReq = window.requestAnimationFrame(step);
+    myReq = window.requestAnimationFrame(animate);
+
+
+
     detectCollisions()
 
 }
@@ -247,13 +261,48 @@ function detectCollisions() {
     // }
 
     rockArray.forEach(rock => {
-        let bottom = rock.y + rock.height - 4;
+        let bottom = rock.y + 4 + rock.height - 10;
         let left = rock.x + 6;
         let right = rock.x + 6 + rock.width - 6;
-        let top = rock.y;
+        let top = rock.y + 4;
 
-        if (left < tallHitBox.x + tallHitBox.width && right > tallHitBox.x && bottom > tallHitBox.y && top < tallHitBox.y + tallHitBox.height || left < longHitBox.x + longHitBox.width && right > longHitBox.x && bottom > longHitBox.y && top < longHitBox.y + longHitBox.height)
-            // cancelAnimationFrame(myReq)
+        // measurements of rock hit box
+        // (this.x + 6, this.y + 4, this.width - 6, this.height - 10);
+
+        if (left < tallHitBox.x + tallHitBox.width && right > tallHitBox.x && bottom > tallHitBox.y && top < tallHitBox.y + tallHitBox.height || left < longHitBox.x + longHitBox.width && right > longHitBox.x && bottom > longHitBox.y && top < longHitBox.y + longHitBox.height) {
+
+            //    collision is true if 
+            //    rockleft < swanRight
+            //    rockRight > swanLeft
+            //    rockBottom > swanTop
+            //    rockTop < swanBottom
+
+            cancelAnimationFrame(myReq)
             console.log('HIT', rock.x, swanX)
+        }
+
     })
+}
+
+function resize() {
+    canvas.width = document.documentElement.clientWidth - 32;
+    if (canvas.width > document.documentElement.clientHeight) {
+        canvas.width = document.documentElement.clientHeight;
+    }
+    canvas.height = canvas.width * 0.5;
+    display.imageSmoothingEnabled = false;
+};
+window.addEventListener("resize", resize);
+
+let keyPresses = {};
+
+window.addEventListener('keydown', keyDownListener, false);
+
+function keyDownListener(event) {
+    keyPresses[event.key] = true;
+}
+window.addEventListener('keyup', keyUpListener, false);
+
+function keyUpListener(event) {
+    keyPresses[event.key] = false;
 }

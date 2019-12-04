@@ -27,8 +27,24 @@ body {
 
 canvas {
 	background: linen;
+	animation-name: example;
+	animation-duration: 5s;
+}
+
+@keyframes example {
+
+	/* background: linen; */
 	/* background: linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%); */
-	border: 2px solid white;
+	0% {
+
+		background: linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%);
+
+	}
+
+
+	100% {
+		background: linear-gradient(to bottom, #154277 0%, #576e71 30%, #e1c45e 70%, #b26339 100%);
+	}
 }
 
 p {
