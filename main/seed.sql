@@ -1,0 +1,1 @@
+INSERT INTO highscores (name, score) VALUES ('Jasmine', 288)

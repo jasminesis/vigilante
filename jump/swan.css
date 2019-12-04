@@ -12,41 +12,26 @@ html {
 
 body {
 	align-content: space-around;
-	background-color: #202830;
+	background: #202830;
 	color: hsl(0, 0%, 100%);
 	display: grid;
-	grid-template-columns: auto;
-	grid-template-rows: auto auto auto;
 	height: 100%;
 	justify-items: center;
 	padding: 0 8px;
 	width: 100%;
-	font-family: 'Bebas Neue', cursive;
+	/* font-family: 'Bebas Neue', cursive; */
+	font-family: 'Sulphur Point', sans-serif;
+	text-align: center;
 
 }
 
 canvas {
 	background: linen;
-	animation-name: example;
-	animation-duration: 5s;
-}
-
-@keyframes example {
-
-	/* background: linen; */
-	/* background: linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%); */
-	0% {
-
-		background: linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%);
-
-	}
-
-
-	100% {
-		background: linear-gradient(to bottom, #154277 0%, #576e71 30%, #e1c45e 70%, #b26339 100%);
-	}
+	/* animation-name: example; */
+	/* animation-duration: 5s; */
+	background: linear-gradient(to bottom, rgb(32, 104, 145) 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%);
 }
 
 p {
-	font-size: 1.2rem;
+	font-size: 1.5rem;
 }

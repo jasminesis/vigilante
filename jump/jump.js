@@ -2,10 +2,13 @@ console.log('pangolin rollin');
 
 // TODO: set up the scoring system
 // TODO: make rocks different sizes?
-// TODO: make resize function
 
 
 // INITIALISING IMAGES 
+var myReq;
+let alive = true;
+let vulnerable = true;
+
 let img = new Image();
 img.src = 'swan.png';
 let bg = new Image();
@@ -13,16 +16,22 @@ bg.src = 'dark-bg.png';
 let rock = new Image();
 rock.src = 'blackrock.png';
 
+let heart = new Image();
+heart.src = 'pixel-heart.png'
+
 img.onload = function () {
     window.requestAnimationFrame(animate);
 };
 
-// Utility functions
+
+// Global variables
+let numberOfLives = 3;
 let gravity = 0.1;
 let friction = 0.1;
 let gameCount = 0;
-let movementSpeed = 5;
+let movementSpeed = 10;
 
+// Utility functions
 function randomIntFromRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -44,6 +53,32 @@ const cycleLoop = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 let currentLoopIndex = 0;
 let frameCount = 0;
 
+function Heart(x) {
+    console.log('creating new heart')
+    this.x = x;
+    this.width = 254;
+    this.height = 254;
+    this.scale = 0.1;
+    this.render = function () {
+        ctx.drawImage(heart, 0, 0, this.width, this.height, this.x, 5, this.width * this.scale, this.height * this.scale)
+    }
+}
+var heartArray = [];
+
+function createHearts() {
+    if (heartArray.length != numberOfLives) {
+        heartArray = [];
+        for (let i = 0; i < numberOfLives; i++) {
+            heartArray.push(new Heart(canvas.width / 2 + 278 - i * 27))
+        }
+    }
+}
+
+function animateHearts() {
+    for (let i = 0; i < heartArray.length; i++) {
+        heartArray[i].render()
+    }
+}
 
 
 function Background() {
@@ -84,6 +119,9 @@ function Rock(x, y, dx, dy) {
     this.width = 32;
     this.height = 27;
 
+    this.cycleLoop = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    this.currentLoopIndex = 0;
+
     this.update = function () {
         this.dy += gravity;
         this.x += this.dx;
@@ -100,6 +138,11 @@ function Rock(x, y, dx, dy) {
         ctx.strokeStyle = "transparent"
         ctx.stroke();
     };
+    this.explode = function (frameX) {
+        this.currentLoopIndex++;
+        ctx.drawImage(this.img, frameX * 40, 72, 40, 35, this.x, this.y, 40, 35)
+    }
+
 }
 var rockArray = [];
 
@@ -107,17 +150,16 @@ function createRocks() {
     rockArray = [];
     // console.log('rockArray', rockArray);
 
-    let numberOfRocks = randomIntFromRange(1, 1)
+    let numberOfRocks = randomIntFromRange(1, 5)
 
     for (let i = 0; i < numberOfRocks; i++) {
-        var x = randomIntFromRange(canvas.width * 3 / 4, canvas.width);
+        var x = randomIntFromRange(canvas.width / 4, canvas.width);
         var y = -20;
-        var dx = randomIntFromRange(-10, -10);
-        var dy = randomIntFromRange(3, 3);
+        var dx = randomIntFromRange(-4, -10);
+        var dy = randomIntFromRange(1, 8);
         rockArray.push(new Rock(x, y, dx, dy));
     }
-    // dwayne.draw();
-    // console.log('Drawing dwayne the rock');
+
 }
 
 function animateRocks() {
@@ -129,7 +171,7 @@ function animateRocks() {
 
 
 // draws the swan
-function drawFrame(frameX, frameY, canvasX, canvasY) {
+function drawSwan(frameX, frameY, canvasX, canvasY) {
     this.x = 0;
     ctx.drawImage(
         img,
@@ -137,7 +179,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
         frameY * height,
         width,
         height,
-        canvas.width / 8,
+        canvasX,
         canvasY,
         scaledWidth,
         scaledHeight
@@ -145,7 +187,7 @@ function drawFrame(frameX, frameY, canvasX, canvasY) {
     // void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 }
 let swanY = canvas.height / 6;
-let swanX = canvas.width / 8;
+let swanX = canvas.width / 11;
 
 function DrawTallHitBox() {
     this.x = swanX + 80 * scale;
@@ -177,15 +219,17 @@ function DrawLongHitBox() {
     }
 }
 
-var myReq;
 
 function animate() {
+
     gameCount += 1;
     frameCount++;
-    if (frameCount < 2) {
-        window.requestAnimationFrame(animate);
+    gameOver()
+
+    if (frameCount < 2 && alive) {
+        myReq = window.requestAnimationFrame(animate);
         return;
-    }
+    } else {}
 
     if (gameCount % 120 == 0) {
         createRocks();
@@ -193,23 +237,10 @@ function animate() {
     frameCount = 0;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-    background.gradient();
     background.render();
+    moveSwan();
 
-    // swanY += gravity;
-    // click to make swan move up
-    if (keyPresses.w) {
-        if (swanY < -50) {} else {
-            swanY -= movementSpeed;
-        }
-    } else if (keyPresses.s) {
-        if (swanY > 125) {} else {
-            swanY += movementSpeed
-        }
-    }
-
-    drawFrame(cycleLoop[currentLoopIndex], 0, swanX, swanY);
+    drawSwan(cycleLoop[currentLoopIndex], 0, swanX, swanY);
     // commented out to stop swan flapping
     currentLoopIndex++;
     if (currentLoopIndex >= cycleLoop.length) {
@@ -217,23 +248,34 @@ function animate() {
     }
     tallHitBox = new DrawTallHitBox()
     tallHitBox.draw();
-    animateRocks();
 
     longHitBox = new DrawLongHitBox();
     longHitBox.draw();
 
+    animateRocks();
+    detectCollisions();
+
+    createHearts();
+
+    animateHearts();
+
     ctx.font = "20px Arial"
-    ctx.fillText(Math.floor(gameCount / 5), 10, 30)
-    myReq = window.requestAnimationFrame(animate);
+    ctx.fillText(String(Math.floor(gameCount / 5) + " / " + Math.floor(gameCount / 5)), 10, 30)
+    if (alive) {
+        window.requestAnimationFrame(animate);
+    } else {}
 
-
-
-    detectCollisions()
 
 }
 
 function gameOver() {
-    alert("hi")
+    if (numberOfLives == 0) {
+        alive = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "80px Arial"
+        ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2)
+
+    }
 }
 
 window.addEventListener('mousemove', () => {
@@ -252,6 +294,30 @@ function getMousePosition(canvas, event) {
 
 }
 
+
+function moveSwan() {
+    if (keyPresses.ArrowUp) {
+        if (swanY < -50) {} else {
+            swanY -= movementSpeed;
+        }
+    } else if (keyPresses.ArrowDown) {
+        if (swanY > 200) {} else {
+            swanY += movementSpeed
+        }
+    } else if (keyPresses.ArrowLeft) {
+        if (swanX < -29) {} else {
+            swanX -= movementSpeed;
+        }
+    } else if (keyPresses.ArrowRight) {
+        if (swanX > canvas.width - 150) {} else {
+            swanX += movementSpeed;
+        }
+    }
+    if (swanX > -29) {
+        swanX -= 2;
+    }
+}
+
 function detectCollisions() {
     // if (mouseX > tallHitBox.x && mouseX < tallHitBox.x + tallHitBox.width && mouseY > tallHitBox.y && mouseY < tallHitBox.y + tallHitBox.height) {
     //     console.log("TOUCHED THE TALL HIT BOX")
@@ -268,17 +334,22 @@ function detectCollisions() {
 
         // measurements of rock hit box
         // (this.x + 6, this.y + 4, this.width - 6, this.height - 10);
+        if (vulnerable) {
 
-        if (left < tallHitBox.x + tallHitBox.width && right > tallHitBox.x && bottom > tallHitBox.y && top < tallHitBox.y + tallHitBox.height || left < longHitBox.x + longHitBox.width && right > longHitBox.x && bottom > longHitBox.y && top < longHitBox.y + longHitBox.height) {
+            if (left < tallHitBox.x + tallHitBox.width && right > tallHitBox.x && bottom > tallHitBox.y && top < tallHitBox.y + tallHitBox.height || left < longHitBox.x + longHitBox.width && right > longHitBox.x && bottom > longHitBox.y && top < longHitBox.y + longHitBox.height) {
+                // rock.explode(rock.cycleLoop[currentLoopIndex]);
 
-            //    collision is true if 
-            //    rockleft < swanRight
-            //    rockRight > swanLeft
-            //    rockBottom > swanTop
-            //    rockTop < swanBottom
+                numberOfLives -= 1;
+                vulnerable = false;
+                setTimeout(() => vulnerable = true, 500)
+                //    collision is true if 
+                //    rockleft < swanRight
+                //    rockRight > swanLeft
+                //    rockBottom > swanTop
+                //    rockTop < swanBottom
 
-            cancelAnimationFrame(myReq)
-            console.log('HIT', rock.x, swanX)
+                console.log('HIT', rock.x, swanX)
+            }
         }
 
     })
@@ -290,7 +361,7 @@ function resize() {
         canvas.width = document.documentElement.clientHeight;
     }
     canvas.height = canvas.width * 0.5;
-    display.imageSmoothingEnabled = false;
+    canvas.imageSmoothingEnabled = false;
 };
 window.addEventListener("resize", resize);
 
@@ -306,3 +377,5 @@ window.addEventListener('keyup', keyUpListener, false);
 function keyUpListener(event) {
     keyPresses[event.key] = false;
 }
+
+resize();
