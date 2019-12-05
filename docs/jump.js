@@ -245,7 +245,7 @@ function DrawLongHitBox() {
 function animate() {
     gameCount += 1;
     frameCount++;
-    // checkIfDead()
+    checkIfDead()
 
     if ((gameCount / 3) % 536 == 0) {
         numberOfLives += 1;
