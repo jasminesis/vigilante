@@ -7,8 +7,9 @@ let alive = true;
 let vulnerable = true;
 
 let squak = new Audio('swan.m4a')
-
-let gameMusic = new Audio('nummer.m4p')
+let squak2 = new Audio('swan2.m4a')
+let squak3 = new Audio('swan3.m4a')
+let squakArray = [squak, squak2, squak3]
 
 let img = new Image();
 img.src = 'swan.png';
@@ -242,20 +243,18 @@ function DrawLongHitBox() {
 
 
 function animate() {
-    gameMusic.play()
     gameCount += 1;
     frameCount++;
     // checkIfDead()
 
     if ((gameCount / 3) % 536 == 0) {
         numberOfLives += 1;
-
     }
 
     if (frameCount < 2 && alive) {
         myReq = window.requestAnimationFrame(animate);
         return;
-    } else {}
+    }
 
 
     if (gameCount % 120 == 0) {
@@ -328,19 +327,19 @@ function getMousePosition(canvas, event) {
 
 function moveSwan() {
     if (keyPresses.ArrowUp) {
-        if (swanY < -50) {} else {
+        if (swanY < 0 - height / 2) {} else {
             swanY -= movementSpeed;
         }
     } else if (keyPresses.ArrowDown) {
-        if (swanY > 200) {} else {
+        if (swanY > canvas.height - height) {} else {
             swanY += movementSpeed
         }
     } else if (keyPresses.ArrowLeft) {
-        if (swanX < -29) {} else {
+        if (swanX < 0 - width / 5) {} else {
             swanX -= movementSpeed;
         }
     } else if (keyPresses.ArrowRight) {
-        if (swanX > canvas.width - 150) {} else {
+        if (swanX > canvas.width - width) {} else {
             swanX += movementSpeed;
         }
     }
@@ -371,7 +370,8 @@ function detectCollisions() {
                 // rock.explode(rock.cycleLoop[currentLoopIndex]);
 
                 numberOfLives -= 1;
-                squak.play()
+                let audioRandom = randomIntFromRange(0, squakArray.length - 1)
+                squakArray[audioRandom].play()
                 swanY += 30;
                 swanX -= 30;
                 vulnerable = false;
