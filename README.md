@@ -9,9 +9,7 @@ Use your arrows keys to move the swan around the screen.
 
 Avoid flying lava rocks.
 
-A new life will be awarded every time the score hits 536.
-
-Enjoy the sound effects. 
+*Enjoy the sound effects. :)*
 
 Play it here: https://jasminesis.github.io/vigilante/
 
